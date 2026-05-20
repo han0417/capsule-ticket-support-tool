@@ -61,7 +61,6 @@ python3 main.py
 2. 填入姓名、Email、密碼（4 位 PIN）
 3. 選擇國籍（Taiwan）
 4. 勾選所有必要條款
-5. 選擇付款方式（Overseas card）
 
 全部完成後，終端機會顯示：
 
