@@ -11,6 +11,8 @@ NATIONAL_SELECTBOX = (By.ID, "nationalSelectbox")
 NATIONAL_TAIWAN = (By.CSS_SELECTOR, "li[data-id='national'][data-value='TAIWAN']")
 AGREE_ALL = (By.ID, "agreeAll")
 AGREE5 = (By.ID, "agree5")
+PAY_METHOD_AREA = (By.ID, "payMethodArea")
+PAY_OVERSEAS = (By.XPATH, "//div[@id='payMethodArea']//li[contains(., 'Overseas')]")
 
 
 def _wait_and_fill(driver, selector: tuple, value: str) -> None:
@@ -38,6 +40,15 @@ def _check(driver, selector: tuple) -> None:
         driver.execute_script("arguments[0].click();", element)
 
 
+def _select_payment(driver) -> None:
+    WebDriverWait(driver, WAIT_TIMEOUT).until(
+        EC.element_to_be_clickable(PAY_METHOD_AREA)
+    ).click()
+    WebDriverWait(driver, WAIT_TIMEOUT).until(
+        EC.element_to_be_clickable(PAY_OVERSEAS)
+    ).click()
+
+
 def fill(driver, config: dict) -> None:
     driver.get(config["url"])
     _wait_and_fill(driver, NAME_SELECTOR, config["name"])
@@ -46,3 +57,4 @@ def fill(driver, config: dict) -> None:
     _select_nationality(driver)
     _check(driver, AGREE_ALL)
     _check(driver, AGREE5)
+    _select_payment(driver)
