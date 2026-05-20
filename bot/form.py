@@ -32,10 +32,10 @@ def _select_nationality(driver) -> None:
 
 def _check(driver, selector: tuple) -> None:
     element = WebDriverWait(driver, WAIT_TIMEOUT).until(
-        EC.element_to_be_clickable(selector)
+        EC.presence_of_element_located(selector)
     )
     if not element.is_selected():
-        element.click()
+        driver.execute_script("arguments[0].click();", element)
 
 
 def fill(driver, config: dict) -> None:
