@@ -2,7 +2,17 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-WAIT_TIMEOUT = 10
+# driver.get() 等待整個頁面載入完成的上限（秒）
+# 搶票當下伺服器可能很忙，網頁需要 3~4 分鐘才跑好，設保守一點
+PAGE_LOAD_TIMEOUT = 300
+
+# 等頁面上「已存在」的欄位變為可互動的上限（秒）
+# 適用於：姓名、Email、密碼、國籍選單 ── 頁面載完後這些幾乎立刻出現
+ELEMENT_TIMEOUT = 30
+
+# 等 AJAX 動態載入的選項出現的上限（秒）
+# 適用於：付款方式清單 ── 需要額外一次 API 請求才會填進去
+AJAX_TIMEOUT = 60
 
 NAME_SELECTOR = (By.ID, "rsBuyerName")
 EMAIL_SELECTOR = (By.ID, "email")
@@ -16,7 +26,7 @@ PAY_OVERSEAS = (By.XPATH, "//div[@id='payMethodArea']//li[contains(., 'Overseas'
 
 
 def _wait_and_fill(driver, selector: tuple, value: str) -> None:
-    element = WebDriverWait(driver, WAIT_TIMEOUT).until(
+    element = WebDriverWait(driver, ELEMENT_TIMEOUT).until(
         EC.visibility_of_element_located(selector)
     )
     element.clear()
@@ -24,16 +34,16 @@ def _wait_and_fill(driver, selector: tuple, value: str) -> None:
 
 
 def _select_nationality(driver) -> None:
-    WebDriverWait(driver, WAIT_TIMEOUT).until(
+    WebDriverWait(driver, ELEMENT_TIMEOUT).until(
         EC.element_to_be_clickable(NATIONAL_SELECTBOX)
     ).click()
-    WebDriverWait(driver, WAIT_TIMEOUT).until(
+    WebDriverWait(driver, ELEMENT_TIMEOUT).until(
         EC.element_to_be_clickable(NATIONAL_TAIWAN)
     ).click()
 
 
 def _check(driver, selector: tuple) -> None:
-    element = WebDriverWait(driver, WAIT_TIMEOUT).until(
+    element = WebDriverWait(driver, ELEMENT_TIMEOUT).until(
         EC.presence_of_element_located(selector)
     )
     if not element.is_selected():
@@ -41,10 +51,10 @@ def _check(driver, selector: tuple) -> None:
 
 
 def _select_payment(driver) -> None:
-    WebDriverWait(driver, WAIT_TIMEOUT).until(
+    WebDriverWait(driver, ELEMENT_TIMEOUT).until(
         EC.element_to_be_clickable(PAY_METHOD_AREA)
     ).click()
-    WebDriverWait(driver, WAIT_TIMEOUT).until(
+    WebDriverWait(driver, AJAX_TIMEOUT).until(  # 付款選項從 AJAX 載入，等更久
         EC.element_to_be_clickable(PAY_OVERSEAS)
     ).click()
 
