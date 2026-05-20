@@ -51,15 +51,24 @@ def _check(driver, selector: tuple) -> None:
 
 
 def _select_payment(driver) -> None:
+    # 點開選單，觸發 AJAX 載入付款選項
     WebDriverWait(driver, ELEMENT_TIMEOUT).until(
         EC.element_to_be_clickable(PAY_METHOD_AREA)
     ).click()
-    # 等付款選項從 AJAX 載入
+    # 等 Overseas 選項出現
     li = WebDriverWait(driver, AJAX_TIMEOUT).until(
         EC.presence_of_element_located(PAY_OVERSEAS)
     )
-    # 用 jQuery trigger 而非原生 click，確保隱藏欄位 #payMethod 的值被正確寫入
-    driver.execute_script("$(arguments[0]).trigger('click');", li)
+    # 讀出實際的 data-value（AJAX 載入後才會有）
+    data_value = li.get_attribute("data-value")
+    label = li.text.strip()
+    # 直接寫入隱藏欄位並觸發驗證，繞過 jQuery 事件委派
+    driver.execute_script("""
+        $('#payMethod').val(arguments[0]);
+        $('#payMethodArea .placeholder').text(arguments[1]);
+        $('#payMethodArea').removeClass('on');
+        if (typeof valueCheck === 'function') valueCheck();
+    """, data_value, label)
 
 
 def fill(driver, config: dict) -> None:
