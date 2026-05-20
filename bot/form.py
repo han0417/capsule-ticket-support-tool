@@ -54,9 +54,12 @@ def _select_payment(driver) -> None:
     WebDriverWait(driver, ELEMENT_TIMEOUT).until(
         EC.element_to_be_clickable(PAY_METHOD_AREA)
     ).click()
-    WebDriverWait(driver, AJAX_TIMEOUT).until(  # 付款選項從 AJAX 載入，等更久
-        EC.element_to_be_clickable(PAY_OVERSEAS)
-    ).click()
+    # 等付款選項從 AJAX 載入
+    li = WebDriverWait(driver, AJAX_TIMEOUT).until(
+        EC.presence_of_element_located(PAY_OVERSEAS)
+    )
+    # 用 jQuery trigger 而非原生 click，確保隱藏欄位 #payMethod 的值被正確寫入
+    driver.execute_script("$(arguments[0]).trigger('click');", li)
 
 
 def fill(driver, config: dict) -> None:
