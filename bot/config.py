@@ -11,6 +11,7 @@ def load() -> dict:
         "email": "BUYER_EMAIL",
         "password": "BUYER_PASSWORD",
     }
+
     config = {}
     missing = []
     for key, env_var in required.items():
@@ -23,4 +24,12 @@ def load() -> dict:
         print(f"[錯誤] .env 缺少以下設定：{', '.join(missing)}")
         print("請參考 .env.example 建立 .env 檔案。")
         sys.exit(1)
+
+    raw_day = os.getenv("TICKET_DAY", "21")
+    try:
+        config["day"] = int(raw_day)
+    except ValueError:
+        print(f"[錯誤] TICKET_DAY 必須是數字，目前值為：{raw_day}")
+        sys.exit(1)
+
     return config

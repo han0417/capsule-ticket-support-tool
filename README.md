@@ -1,6 +1,6 @@
 # Capsule Ticket Support Tool
 
-自動填寫 [海雲台藍線樂園](https://www.tbluelinepark.com) 購票頁面的輔助工具。執行後會自動開啟 Chrome、填好所有欄位、勾好條款，最後等待你手動按下確認送出。
+自動操作 [海雲台藍線樂園](https://www.tbluelinepark.com) 購票頁面的輔助工具。執行後會自動開啟 Chrome、填好所有欄位、勾好條款、切換到下個月並點選指定日期，最後等待你手動按下確認送出。
 
 ---
 
@@ -36,14 +36,23 @@ pip3 install -r requirements.txt
 cp .env.example .env
 ```
 
-用任何文字編輯器開啟 `.env`，填入以下四個欄位：
+用任何文字編輯器開啟 `.env`，填入以下欄位：
 
 ```
 TICKET_URL=https://www.tbluelinepark.com/ticket_eng/GD2000441
 BUYER_NAME=你的英文姓名
 BUYER_EMAIL=你的電子信箱
 BUYER_PASSWORD=1234
+TICKET_DAY=21
 ```
+
+| 欄位 | 說明 |
+|------|------|
+| `TICKET_URL` | 購票頁面網址 |
+| `BUYER_NAME` | 購票人英文姓名 |
+| `BUYER_EMAIL` | 購票人電子信箱 |
+| `BUYER_PASSWORD` | 4 位數查詢 PIN（非登入密碼） |
+| `TICKET_DAY` | 欲購買的日期（幾號），預設 `21` |
 
 > **注意：`BUYER_PASSWORD` 只填 4 位數字。** 這是網站用來之後查詢訂單的 4 位 PIN，不是你的登入密碼。
 
@@ -61,6 +70,7 @@ python3 main.py
 2. 填入姓名、Email、密碼（4 位 PIN）
 3. 選擇國籍（Taiwan）
 4. 勾選所有必要條款
+5. 切換到下個月，點選 `.env` 中 `TICKET_DAY` 指定的日期
 
 全部完成後，終端機會顯示：
 
@@ -88,9 +98,13 @@ PAGE_LOAD_TIMEOUT = 300   # ← 調這個（目前 5 分鐘）
 # 等待頁面上的欄位可互動（秒）
 ELEMENT_TIMEOUT = 30      # ← 調這個（適用姓名、Email 等靜態欄位）
 
-# 等待 AJAX 載入的付款選項出現（秒）
-AJAX_TIMEOUT = 60         # ← 調這個（適用付款方式下拉選單）
+# 等待 AJAX 動態載入的內容出現（秒）
+AJAX_TIMEOUT = 60         # ← 調這個（適用日期 live 狀態、時段選單）
 ```
+
+### 點選日期後跳出「This schedule has been sold out」
+
+表示該日期已售完，工具會自動 dismiss 彈窗並拋出錯誤。請確認 `.env` 中的 `TICKET_DAY` 對應的日期確實有開放購票。
 
 ### `.env` 檔案遺失或格式錯誤
 
