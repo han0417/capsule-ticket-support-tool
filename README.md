@@ -1,6 +1,6 @@
 # Capsule Ticket Support Tool
 
-自動填寫 [海雲台藍線樂園](https://www.tbluelinepark.com) 購票頁面的輔助工具。執行後會自動開啟 Chrome、填好所有欄位、勾好條款、選好付款方式，最後等待你手動按下確認送出。
+自動填寫 [海雲台藍線樂園](https://www.tbluelinepark.com) 購票頁面的輔助工具。執行後會自動開啟 Chrome、填好所有欄位、勾好條款，最後等待你手動按下確認送出。
 
 ---
 
