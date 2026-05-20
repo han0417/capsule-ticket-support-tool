@@ -7,6 +7,8 @@ WAIT_TIMEOUT = 10
 NAME_SELECTOR = (By.ID, "rsBuyerName")
 EMAIL_SELECTOR = (By.ID, "email")
 PASSWORD_SELECTOR = (By.ID, "rsBuyerPwd")
+NATIONAL_SELECTBOX = (By.ID, "nationalSelectbox")
+NATIONAL_TAIWAN = (By.CSS_SELECTOR, "li[data-id='national'][data-value='TAIWAN']")
 
 
 def _wait_and_fill(driver, selector: tuple, value: str) -> None:
@@ -17,8 +19,18 @@ def _wait_and_fill(driver, selector: tuple, value: str) -> None:
     element.send_keys(value)
 
 
+def _select_nationality(driver) -> None:
+    WebDriverWait(driver, WAIT_TIMEOUT).until(
+        EC.element_to_be_clickable(NATIONAL_SELECTBOX)
+    ).click()
+    WebDriverWait(driver, WAIT_TIMEOUT).until(
+        EC.element_to_be_clickable(NATIONAL_TAIWAN)
+    ).click()
+
+
 def fill(driver, config: dict) -> None:
     driver.get(config["url"])
     _wait_and_fill(driver, NAME_SELECTOR, config["name"])
     _wait_and_fill(driver, EMAIL_SELECTOR, config["email"])
     _wait_and_fill(driver, PASSWORD_SELECTOR, config["password"])
+    _select_nationality(driver)

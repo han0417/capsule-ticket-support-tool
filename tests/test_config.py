@@ -1,5 +1,12 @@
 import pytest
+from unittest.mock import patch
 from bot.config import load
+
+
+@pytest.fixture(autouse=True)
+def no_dotenv():
+    with patch("bot.config.load_dotenv"):
+        yield
 
 
 def test_load_returns_all_fields(monkeypatch):
